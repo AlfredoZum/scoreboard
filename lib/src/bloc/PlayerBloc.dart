@@ -12,25 +12,27 @@ class PlayersBloc {
   }
 
   PlayersBloc._internal() {
-    getPlayers();
+    getActivePlayers();
   }
 
   final _playerController = StreamController<List<PlayerModel>>.broadcast();
+  final _activeplayerController = StreamController<List<PlayerModel>>.broadcast();
+
 
   Stream<List<PlayerModel>> get playersStream     => _playerController.stream;
+  Stream<List<PlayerModel>> get activeplayersStream     => _activeplayerController.stream;
 
   dispose() {
     _playerController?.close();
   }
 
-  getPlayers() async {
-    print( "entra aqui" );
-    _playerController.sink.add( await DBProvider.db.getAllPlayers()  );
+  getActivePlayers() async {
+    _activeplayerController.sink.add( await DBProvider.db.getActivePlayers()  );
   }
 
   addPlayer( PlayerModel player ) async{
     await DBProvider.db.newPlayer( player );
-    getPlayers();
+    getActivePlayers();
   }
 
 }

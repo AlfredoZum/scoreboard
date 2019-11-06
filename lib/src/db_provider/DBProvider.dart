@@ -31,6 +31,7 @@ class DBProvider {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
     final path = join( documentsDirectory.path, 'ScoreboardDB.db' );
+    print( path );
 
     return await openDatabase(
         path,
@@ -50,7 +51,8 @@ class DBProvider {
                   ' id INTEGER PRIMARY KEY,'
                   ' playerId INTEGER,'
                   ' score INTEGER,'
-                  ' date TEXT,'
+                  ' create_at TEXT,'
+                  ' update_at TEXT,'
                   ' interval INTEGER,'
                   ' status INTEGER'
                   ')'
@@ -83,7 +85,7 @@ class DBProvider {
   Future<List<PlayerModel>> getActivePlayers() async {
 
     final db  = await database;
-    final res = await db.rawQuery("SELECT * FROM players INNER JOIN score on score.playerId = players.id where score.status = 1;");
+    final res = await db.rawQuery("SELECT players.*, score.score FROM players INNER JOIN score on score.playerId = players.id where score.status = 1;");
 
     List<PlayerModel> list = res.isNotEmpty
         ? res.map( (c) => PlayerModel.fromJson(c) ).toList()
@@ -94,7 +96,9 @@ class DBProvider {
   Future<List<ScoreModel>> getActiveScores() async {
 
     final db  = await database;
-    final res = await db.rawQuery("SELECT * FROM score WHERE status = '1';");
+    final res = await db.rawQuery("SELECT score.*, players.name as playerName, players.image as playerImage  FROM score  INNER JOIN players on players.id = score.playerId WHERE status = '1';");
+
+    print( res );
 
     List<ScoreModel> list = res.isNotEmpty
         ? res.map( (c) => ScoreModel.fromJson(c) ).toList()
@@ -119,5 +123,26 @@ class DBProvider {
     final res = await db.insert('score',  scoreModel.toJson() );
     return res;
   }
+
+  //agrega un punto al marcador del jugador
+  updateScoreToPlayer( int playerId, String type, String updateAt ) async {
+
+    String mathType = ( type == "add" ) ? "+" : "-";
+
+    final db  = await database;
+    final res = await db.rawQuery("UPDATE Score SET score = ( score $mathType 1 ), update_at = '$updateAt' WHERe playerId = $playerId;");
+    //final res = await db.insert('score',  scoreModel.toJson() );
+    return res;
+  }
+
+  //inserta los nuevos jugadores
+  endGame() async {
+
+    final db  = await database;
+    final res = await db.rawQuery("UPDATE Score SET status = 2 where status = 1;");
+    return res;
+
+  }
+
 
 }

@@ -2,16 +2,22 @@ class ScoreModel {
 
   int id;
   int playerId;
+  String playerName;
+  String playerImage;
   int score;
-  String date;
+  String createAt;
+  String updateAt;
   int interval;
   int status;
 
   ScoreModel({
     this.id,
     this.playerId,
+    this.playerName,
+    this.playerImage,
     this.score,
-    this.date,
+    this.createAt,
+    this.updateAt,
     this.interval,
     this.status,
   });
@@ -19,8 +25,11 @@ class ScoreModel {
   factory ScoreModel.fromJson(Map<String, dynamic> json) => new ScoreModel(
     id   : json["id"],
     playerId : json["playerId"],
+    playerName: json["playerName"],
+    playerImage: json["playerImage"],
     score: json["score"],
-    date: json["date"],
+    createAt: json["create_at"],
+    updateAt: json["update_at"],
     interval: json["interval"],
     status: json["status"],
   );
@@ -29,7 +38,8 @@ class ScoreModel {
     "id"   : id,
     "playerId" : playerId,
     "score": score,
-    "date": date,
+    "create_at": createAt,
+    "update_at": updateAt,
     "interval": interval,
     "status": status,
   };

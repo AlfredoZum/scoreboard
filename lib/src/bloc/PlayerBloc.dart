@@ -18,7 +18,6 @@ class PlayersBloc {
   final _playerController = StreamController<List<PlayerModel>>.broadcast();
   final _activeplayerController = StreamController<List<PlayerModel>>.broadcast();
 
-
   Stream<List<PlayerModel>> get playersStream     => _playerController.stream;
   Stream<List<PlayerModel>> get activeplayersStream     => _activeplayerController.stream;
 

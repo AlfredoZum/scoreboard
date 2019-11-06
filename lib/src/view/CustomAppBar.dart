@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:scoreboard/src/bloc/PlayerBloc.dart';
 import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
-void addPlayers( PlayersBloc playersBloc ){
+//Bloc
+import 'package:scoreboard/src/bloc/ScoreBloc.dart';
+
+void endGame(){
+
+  final ScoreBloc scoreBloc = new ScoreBloc();
+  scoreBloc.endGame();
 
 }
 
@@ -34,7 +40,7 @@ class HomeAppBarHome extends AppBar {
     actions: <Widget>[
       IconButton(
         icon: Icon( Icons.stop ),
-        onPressed: () => addPlayers( playersBloc ),
+        onPressed: () => endGame(),
       ),
       IconButton(
         icon: Icon( Icons.add ),

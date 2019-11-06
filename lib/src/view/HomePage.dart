@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
     final playersBloc = new PlayersBloc();
     final scoreBloc = new ScoreBloc();
 
-    //scoreBloc.getActiveScores();
+    scoreBloc.getActiveScores();
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
         SizedBox( height: SizeConfig.padding10 ),
         _scoreboard( scoreBloc ),
         SizedBox( height: SizeConfig.padding20 ),
-        _activePlayers( playersBloc ),
+        _activePlayers( playersBloc, scoreBloc ),
         //_marker( players ),
       ],
     );
@@ -86,6 +86,10 @@ class _HomePageState extends State<HomePage> {
             child: Text('No hay información'),
           );
         }
+
+        var score2 = scores;
+
+        score2.sort((a,b) => b.updateAt.compareTo(a.updateAt));
 
         return Center(
             child: Card(
@@ -112,6 +116,11 @@ class _HomePageState extends State<HomePage> {
                               fontWeight: FontWeight.w500
                           ),
                         ),
+                        SizedBox( width: 10.0 ),
+                        Tooltip(
+                            message: ( getScoreBoard( scores ) <= 0 ) ? "" : score2[0].playerName,
+                            child: Icon( Icons.info ),
+                        ),
                       ],
                     )
                 )
@@ -125,7 +134,7 @@ class _HomePageState extends State<HomePage> {
 
 
 
-  Widget _activePlayers( PlayersBloc playersBloc ){
+  Widget _activePlayers( PlayersBloc playersBloc, ScoreBloc scoreBloc ){
 
     return StreamBuilder<List<PlayerModel>>(
       stream: playersBloc.activeplayersStream,
@@ -143,87 +152,65 @@ class _HomePageState extends State<HomePage> {
           );
         }
 
-
-
         int tempTotalPlayers = ( players.length % 2 == 1 ) ? players.length + 1 : players.length;
         double totalPlayers = tempTotalPlayers / 2;
+
+        print( totalPlayers );
+        print( "hey que ondaaa" );
 
         return Expanded(
           child: SingleChildScrollView(
             child: Table(
-              children: List.generate( totalPlayers.toInt(), (index) => _getDataRow( index, players )),
+              children: List.generate( totalPlayers.toInt(), (index) => _getDataRow( index, players, scoreBloc )),
             ),
           ),
         );
 
-        /*return Table(
-          children: List.generate( totalPlayers.toInt(), (index) => _getDataRow(players[index])),
-        );*/
-
-        /*return Expanded(
-          child: ListView.builder(
-            itemCount: players.length,
-            itemBuilder: (BuildContext context, int index){
-
-              var player = players[index];
-
-              print( 'assets/players/${player.image}' );
-              print( "'assets/players/'" );
-
-              return DataTable(
-                rows: List.generate(results.length, (index) => Container() ),
-              );
-
-
-              return Container();
-
-              return Container(
-                child: FadeInImage(
-                  image: AssetImage( 'assets/players/${player.image}' ),
-                  placeholder: AssetImage('assets/img/no-image.jpg'),
-                  fadeInDuration: Duration(microseconds: 150),
-                  fit: BoxFit.cover,
-                ),
-              );
-              //return _cardPlayer( players[index] );
-            },
-          ),
-        );*/
-
-        /*return Expanded(
-          child: GridView.builder(
-              itemCount: players.length,
-              gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                //childAspectRatio: SizeConfig.blockSizeVertical * .083,
-                //childAspectRatio: SizeConfig.blockSizeVertical * 1,
-                childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.6),
-              ),
-              itemBuilder: (BuildContext context, int index){
-                return _cardPlayer( players[index] );
-              }
-          ),
-        );*/
 
       },
     );
 
   }
 
-  TableRow _getDataRow( int i, List<PlayerModel> players ) {
+  TableRow _getDataRow( int i, List<PlayerModel> players, ScoreBloc scoreBloc ) {
 
     int index = i * 2;
 
     return TableRow(
         children: [
-          if( players[index] == null ) Container() else _cardPlayer( players[index] ),
-          if( ( players.length - 1 ) < index + 1 ) Container() else _cardPlayer( players[index + 1] ),
+          if( players[index] == null ) Container() else _cardPlayer( players[index], scoreBloc ),
+          if( ( players.length - 1 ) < index + 1 ) Container() else _cardPlayer( players[index + 1], scoreBloc ),
         ]
     );
   }
 
-  Widget _cardPlayer( PlayerModel player ){
+  Widget _cardPlayer( PlayerModel player, ScoreBloc scoreBloc ){
 
+    return GestureDetector(
+      // When the child is tapped, show a snackbar.
+      onTap: () => scoreBloc.updateScoreToPlayer( player.id, 'add' ),
+      onLongPress: () => scoreBloc.updateScoreToPlayer( player.id, 'remove' ),
+      // The custom button
+      child: Container(
+        height: 250.0,
+        padding: EdgeInsets.all( SizeConfig.padding10 ),
+        width: double.infinity,
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Column(
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              _infoPlayer( player.name, player.image, scoreBloc ),
+              _scoreboardPlayer( scoreBloc, player.id ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    /*
     return Container(
       height: 250.0,
       padding: EdgeInsets.all( SizeConfig.padding10 ),
@@ -235,16 +222,17 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            _infoPlayer( player.name, player.image ),
-            _scoreboardPlayer(  ),
+            _infoPlayer( player.name, player.image, scoreBloc ),
+            _scoreboardPlayer( scoreBloc, player.id ),
           ],
         ),
       ),
     );
+    */
 
   }
 
-  Widget _infoPlayer( String name, String image ){
+  Widget _infoPlayer( String name, String image, ScoreBloc scoreBloc ){
 
     return Expanded(
       child: Stack(
@@ -261,58 +249,13 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 
-    /*return Expanded(
-      child: Container(
-        child: Stack(
-          children: <Widget>[
-            _imagePlayer( image ),
-            Column(
-              children: <Widget>[
-                Expanded( child: Container(), ),
-                _namePlayer( name ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );*/
-
-    return Expanded(
-      //height: SizeConfig.blockSizeVertical * 22,
-      child: Stack(
-        children: <Widget>[
-          _imagePlayer( image ),
-          Column(
-            children: <Widget>[
-              Expanded( child: Container(), ),
-              _namePlayer( name ),
-            ],
-          ),
-        ],
-      ),
-    );
-
   }
 
   Widget _imagePlayer( String image ){
 
-    return ClipRRect(
-      borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(20.0),
-          topRight: const Radius.circular(20.0)
-      ),
-      child: FadeInImage(
-        image: AssetImage( 'assets/players/$image' ),
-        placeholder: AssetImage('assets/img/loading.gif'),
-        fadeInDuration: Duration(microseconds: 150),
-        fit: BoxFit.cover,
-      ),
-    );
-
     return Container(
-      width: 100.0,
-      height: 100.0,
-      color: Colors.green,
+      width: double.infinity,
+      height: double.infinity,
       child: ClipRRect(
         borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(20.0),
@@ -321,7 +264,6 @@ class _HomePageState extends State<HomePage> {
         child: FadeInImage(
           image: AssetImage( 'assets/players/$image' ),
           placeholder: AssetImage('assets/img/loading.gif'),
-          fadeInDuration: Duration(microseconds: 150),
           fit: BoxFit.cover,
         ),
       ),
@@ -350,20 +292,41 @@ class _HomePageState extends State<HomePage> {
 
   }
 
-  Widget _scoreboardPlayer(  ){
+  Widget _scoreboardPlayer( ScoreBloc scoreBloc, int playerId ){
 
-    return Container(
-      padding: EdgeInsets.symmetric( vertical: SizeConfig.padding10 ),
-      child: Center(
-        child: Text(
-          '0',
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 22.0
+    return StreamBuilder<List<ScoreModel>>(
+      stream: scoreBloc.scoreStream,
+      builder: (BuildContext context, AsyncSnapshot<List<ScoreModel>> snapshot) {
+
+        if ( !snapshot.hasData ) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        final scores = snapshot.data;
+
+        if ( scores.length == 0 ) {
+          return Center(
+            child: Text('No hay información'),
+          );
+        }
+
+        ScoreModel playerScore = scores.where( ( s ) => s.playerId == playerId ).toList()[0];
+
+        return Container(
+          padding: EdgeInsets.symmetric( vertical: SizeConfig.padding10 ),
+          child: Center(
+            child: Text(
+              playerScore.score.toString(),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22.0
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
+        );
+
+      },
     );
 
   }

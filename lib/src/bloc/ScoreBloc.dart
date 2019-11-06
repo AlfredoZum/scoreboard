@@ -18,6 +18,7 @@ class ScoreBloc {
   final _scoreController = StreamController<List<ScoreModel>>.broadcast();
 
   Stream<List<ScoreModel>> get scoreStream => _scoreController.stream;
+  //Stream<List<ScoreModel>> get scoreLastWin => _scoreController.stream.transform( getLastWin );
 
   dispose() {
     _scoreController?.close();
@@ -26,21 +27,20 @@ class ScoreBloc {
   getActiveScores() async {
 
     final _activeScore = await DBProvider.db.getActiveScores();
-    final _lastScore = await DBProvider.db.getLastScore();
+
+    print( "cuantas veces entra aqui?" );
 
     if( _activeScore.length == 0 ){
       int numInterval = 1;
       final _lastScore = await DBProvider.db.getLastScore();
       if( _lastScore.length > 0 ){
-
-
-
+        numInterval = _lastScore[0].interval + 1;
       }
 
       final _players = await DBProvider.db.getAllPlayers();
       _players.forEach( ( p ){
 
-        final score = ScoreModel( playerId: p.id, score: 0, date: DateTime.now().toString(), interval: numInterval, status: 1 );
+        final score = ScoreModel( playerId: p.id, score: 0, createAt: DateTime.now().toString(), updateAt: DateTime.now().toString(), interval: numInterval, status: 1 );
         DBProvider.db.addScore( score );
 
       });
@@ -50,9 +50,20 @@ class ScoreBloc {
     _scoreController.sink.add( await DBProvider.db.getActiveScores()  );
   }
 
-  /*addPlayer( PlayerModel player ) async{
-    await DBProvider.db.newPlayer( player );
+  getLastPlayerWin( int playerId, String type ) async {
+
+  }
+
+  updateScoreToPlayer( int playerId, String type ) async {
+    await DBProvider.db.updateScoreToPlayer( playerId, type, DateTime.now().toString() );
     getActiveScores();
-  }*/
+  }
+
+  endGame() async {
+
+    await DBProvider.db.endGame();
+    getActiveScores();
+
+  }
 
 }

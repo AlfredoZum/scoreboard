@@ -5,6 +5,7 @@ class ScoreModel {
   String playerName;
   String playerImage;
   int score;
+  int assistance;
   String createAt;
   String updateAt;
   int interval;
@@ -16,6 +17,7 @@ class ScoreModel {
     this.playerName,
     this.playerImage,
     this.score,
+    this.assistance,
     this.createAt,
     this.updateAt,
     this.interval,
@@ -28,6 +30,7 @@ class ScoreModel {
     playerName: json["playerName"],
     playerImage: json["playerImage"],
     score: json["score"],
+    assistance: json["assistance"],
     createAt: json["create_at"],
     updateAt: json["update_at"],
     interval: json["interval"],
@@ -38,6 +41,7 @@ class ScoreModel {
     "id"   : id,
     "playerId" : playerId,
     "score": score,
+    "assistance": assistance,
     "create_at": createAt,
     "update_at": updateAt,
     "interval": interval,

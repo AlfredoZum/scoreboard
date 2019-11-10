@@ -28,8 +28,6 @@ class ScoreBloc {
 
     final _activeScore = await DBProvider.db.getActiveScores();
 
-    print( "cuantas veces entra aqui?" );
-
     if( _activeScore.length == 0 ){
       int numInterval = 1;
       final _lastScore = await DBProvider.db.getLastScore();
@@ -40,7 +38,7 @@ class ScoreBloc {
       final _players = await DBProvider.db.getAllPlayers();
       _players.forEach( ( p ){
 
-        final score = ScoreModel( playerId: p.id, score: 0, createAt: DateTime.now().toString(), updateAt: DateTime.now().toString(), interval: numInterval, status: 1 );
+        final score = ScoreModel( playerId: p.id, score: 0, assistance: 0, createAt: DateTime.now().toString(), updateAt: DateTime.now().toString(), interval: numInterval, status: 1 );
         DBProvider.db.addScore( score );
 
       });
@@ -54,8 +52,8 @@ class ScoreBloc {
 
   }
 
-  updateScoreToPlayer( int playerId, String type ) async {
-    await DBProvider.db.updateScoreToPlayer( playerId, type, DateTime.now().toString() );
+  updateScoreToPlayer( int playerId, String type, String table ) async {
+    await DBProvider.db.updateScoreToPlayer( playerId, type, DateTime.now().toString(), table );
     getActiveScores();
   }
 

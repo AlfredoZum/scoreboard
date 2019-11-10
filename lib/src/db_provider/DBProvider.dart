@@ -25,19 +25,20 @@ class DBProvider {
     return _database;
   }
 
-
   initDB() async {
 
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
     final path = join( documentsDirectory.path, 'ScoreboardDB.db' );
-    print( path );
 
     return await openDatabase(
         path,
         version: 1,
+        //onOpen: _onOpen,
+        //onUpgrade: _onUpdate,
         onOpen: (db) {},
         onCreate: ( Database db, int version ) async {
+
           await db.execute(
               'CREATE TABLE players ('
                   ' id INTEGER PRIMARY KEY,'
@@ -54,6 +55,7 @@ class DBProvider {
                   ' create_at TEXT,'
                   ' update_at TEXT,'
                   ' interval INTEGER,'
+                  ' assistance INTEGER DEFAULT 0,'
                   ' status INTEGER'
                   ')'
           );
@@ -98,8 +100,6 @@ class DBProvider {
     final db  = await database;
     final res = await db.rawQuery("SELECT score.*, players.name as playerName, players.image as playerImage  FROM score  INNER JOIN players on players.id = score.playerId WHERE status = '1';");
 
-    print( res );
-
     List<ScoreModel> list = res.isNotEmpty
         ? res.map( (c) => ScoreModel.fromJson(c) ).toList()
         : [];
@@ -125,12 +125,22 @@ class DBProvider {
   }
 
   //agrega un punto al marcador del jugador
-  updateScoreToPlayer( int playerId, String type, String updateAt ) async {
+  updateScoreToPlayer( int playerId, String type, String updateAt, String table ) async {
 
     String mathType = ( type == "add" ) ? "+" : "-";
 
+    String setUpdate = "";
+    switch (table) {
+      case "score":
+        setUpdate = "score = ( score $mathType 1 ), update_at = '$updateAt'";
+        break;
+      case "assistance":
+        setUpdate = "assistance = ( assistance $mathType 1 )";
+        break;
+    }
+
     final db  = await database;
-    final res = await db.rawQuery("UPDATE Score SET score = ( score $mathType 1 ), update_at = '$updateAt' WHERe playerId = $playerId;");
+    final res = await db.rawQuery("UPDATE Score SET $setUpdate WHERE playerId = $playerId and status = 1");
     //final res = await db.insert('score',  scoreModel.toJson() );
     return res;
   }

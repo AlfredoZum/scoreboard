@@ -28,6 +28,9 @@ void addPlayers2( PlayersBloc playersBloc ){
 
   });
 
+  final ScoreBloc scoreBloc = new ScoreBloc();
+  scoreBloc.getActiveScores();
+
 }
 
 class HomeAppBarHome extends AppBar {

@@ -24,8 +24,7 @@ class Provider extends InheritedWidget {
 
   }
 
-  Provider._internal({ Key key, Widget child })
-      : super(key: key, child: child );
+  Provider._internal({ Key key, Widget child }) : super(key: key, child: child );
 
 
   final dbProvider = DBProvider.db.database;

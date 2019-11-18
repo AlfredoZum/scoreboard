@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'package:rxdart/rxdart.dart';
 
 //provider
 import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
-class ScoreBloc {
+//validators
+import 'package:scoreboard/src/bloc/ScoreValidators.dart';
+
+class ScoreBloc with ScoreValidators {
 
   static final ScoreBloc _singleton = new ScoreBloc._internal();
 
@@ -15,13 +19,16 @@ class ScoreBloc {
     getActiveScores();
   }
 
-  final _scoreController = StreamController<List<ScoreModel>>.broadcast();
+  final _scoreController = BehaviorSubject<List<ScoreModel>>();
+
+  final _streaksPlayer = BehaviorSubject<Map>();
 
   Stream<List<ScoreModel>> get scoreStream => _scoreController.stream;
-  //Stream<List<ScoreModel>> get scoreLastWin => _scoreController.stream.transform( getLastWin );
+  Stream<Map> get streaksPlayer => _streaksPlayer.stream;
 
   dispose() {
     _scoreController?.close();
+    _streaksPlayer?.close();
   }
 
   getActiveScores() async {
@@ -52,8 +59,31 @@ class ScoreBloc {
 
   }
 
+  addStreaksPlayer(){
+
+    //streaksPlayer
+
+  }
+
   updateScoreToPlayer( int playerId, String type, String table ) async {
     await DBProvider.db.updateScoreToPlayer( playerId, type, DateTime.now().toString(), table );
+
+    if( type == "add" ){
+      Map _streaks =  _streaksPlayer.value;
+      if( _streaks == null ){
+        _streaksPlayer.sink.add( { "playerId": playerId, "total": 1 } );
+      }else{
+
+        if( _streaks['playerId'] == playerId ){
+          _streaksPlayer.sink.add( { "playerId": playerId, "total": _streaks['total'] + 1 } );
+        }else{
+          _streaksPlayer.sink.add( { "playerId": playerId, "total": 1 } );
+        }
+
+      }
+
+    }
+
     getActiveScores();
   }
 

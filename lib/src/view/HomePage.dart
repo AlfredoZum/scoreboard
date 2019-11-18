@@ -31,7 +31,6 @@ class HomePage extends StatelessWidget {
 
   }
 
-
   @override
   Widget build(BuildContext context) {
 
@@ -150,15 +149,18 @@ class HomePage extends StatelessWidget {
     var maxScore = scores.toList();
     maxScore.sort((a,b) => b.score.compareTo(a.score));
 
+    var minScore = scores.toList();
+    minScore.sort((a,b) => a.score.compareTo(b.score));
+
     return TableRow(
         children: [
-          ( scores[index] == null ) ? null : _cardPlayer( context, scores[index], scoreBloc, score2[0].playerId, maxScore[0].score ),
-          ( ( scores.length - 1 ) < index + 1 ) ? null : _cardPlayer( context, scores[index + 1], scoreBloc, score2[0].playerId, maxScore[0].score  ),
+          ( scores[index] == null ) ? null : _cardPlayer( context, scores[index], scoreBloc, score2[0].playerId, maxScore[0].score, minScore[0].score ),
+          ( ( scores.length - 1 ) < index + 1 ) ? null : _cardPlayer( context, scores[index + 1], scoreBloc, score2[0].playerId, maxScore[0].score, minScore[0].score ),
         ].where( ( item ) => item != null ).toList()
     );
   }
 
-  Widget _cardPlayer( BuildContext context, ScoreModel scores, ScoreBloc scoreBloc, int playerId, int maxScore ){
+  Widget _cardPlayer( BuildContext context, ScoreModel scores, ScoreBloc scoreBloc, int playerId, int maxScore, int minScore ){
 
     final _borderSideWin = new BorderSide(color: Theme.of(context).primaryColor, width: 2.0);
 
@@ -176,7 +178,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            _infoPlayer( context, scores.playerName, scores.playerImage, scores.score, maxScore, scoreBloc ),
+            _infoPlayer( context, scores, maxScore, minScore, scoreBloc ),
             _scoreboardPlayer( scoreBloc, scores ),
           ],
         ),
@@ -185,29 +187,28 @@ class HomePage extends StatelessWidget {
 
   }
 
-  Widget _infoPlayer( BuildContext context, String name, String image, int score, int maxScore, ScoreBloc scoreBloc ){
+  Widget _infoPlayer( BuildContext context, ScoreModel scores, int maxScore, int minScore, ScoreBloc scoreBloc ){
 
-    IconData icon = null;
-    Color colorIcon = Colors.white;
-    if( score == 0 ){
-      icon = FontAwesomeIcons.kiwiBird;
-      colorIcon = Colors.blue;
-    }else if( score == maxScore ){
-      icon = FontAwesomeIcons.trophy;
-      colorIcon = Colors.yellow;
+    String imgIcon = null;
+
+    if( scores.score == minScore ){
+      imgIcon = "icons8-pavo-96.png";
+    }else if( scores.score != 0 && scores.score == maxScore ){
+      imgIcon = "trophy.png";
     }
 
     return Expanded(
       child: Stack(
         children: <Widget>[
-          _imagePlayer( image ),
+          _imagePlayer( scores.playerImage ),
           Column(
             children: <Widget>[
               Expanded( child: Container(), ),
-              _namePlayer( context, name ),
+              _namePlayer( context, scores.playerName ),
             ],
           ),
-          _iconPlayer( icon: icon, color : colorIcon ),
+          _iconPlayer( image: imgIcon ),
+          _streaksPlayer( scoreBloc, scores.id ),
         ].where( ( item ) => item != null ).toList(),
         //color: Colors.red,
       ),
@@ -215,21 +216,58 @@ class HomePage extends StatelessWidget {
 
   }
 
-  Widget _iconPlayer( { IconData icon, Color color } ){
+  Widget _iconPlayer( { String image } ){
 
-    if( icon == null )
+    if( image == null )
       return Container();
 
     return Align(
       alignment: Alignment.topRight,
       child: Padding(
         padding: EdgeInsets.only( right: 10.0, top: 5.0 ),
-        child: Icon(
-          icon,
-          size: 30.0,
-          color: color,
+        child: Container(
+          height: 50.0,
+          width: 50.0,
+          child: FadeInImage(
+            image: AssetImage( 'assets/img/$image' ),
+            placeholder: AssetImage('assets/img/loading.gif'),
+            fit: BoxFit.cover,
+          ),
         ),
       ),
+    );
+
+  }
+
+  Widget _streaksPlayer( ScoreBloc scoreBloc, int playerId ){
+
+
+    return StreamBuilder<Map<dynamic, dynamic>>(
+        stream: scoreBloc.streaksPlayer,
+        builder: (BuildContext context, AsyncSnapshot<Map<dynamic, dynamic>> snapshot) {
+          if (!snapshot.hasData) {
+            return Container();
+          }
+
+          final Map streaks = snapshot.data;
+
+          if( playerId != streaks['playerId'] )
+            return Container();
+
+          return Container(
+              child: new Text( streaks['total'].toString() ),
+              margin: EdgeInsets.only( left: 5.0, top: 1.0 ),
+              padding: const EdgeInsets.all(8.0), // borde width
+              decoration: new BoxDecoration(
+                color: const Color(0xFFFFFFFF), // border color
+                shape: BoxShape.circle,
+              )
+          );
+
+          return Text( streaks['total'].toString() );
+
+        }
+
     );
 
   }

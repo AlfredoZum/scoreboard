@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'package:rxdart/rxdart.dart';
 
 //provider
 import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
 class PlayersBloc {
 
-  static final PlayersBloc _singleton = new PlayersBloc._internal();
+  /*static final PlayersBloc _singleton = new PlayersBloc._internal();
 
   factory PlayersBloc() {
     return _singleton;
@@ -13,16 +14,20 @@ class PlayersBloc {
 
   PlayersBloc._internal() {
     getActivePlayers();
-  }
+  }*/
 
-  final _playerController = StreamController<List<PlayerModel>>.broadcast();
-  final _activeplayerController = StreamController<List<PlayerModel>>.broadcast();
+  /*final _playerController = StreamController<List<PlayerModel>>.broadcast();
+  final _activeplayerController = StreamController<List<PlayerModel>>.broadcast();*/
+
+  final _playerController    = BehaviorSubject<List<PlayerModel>>();
+  final _activeplayerController = BehaviorSubject<List<PlayerModel>>();
 
   Stream<List<PlayerModel>> get playersStream     => _playerController.stream;
   Stream<List<PlayerModel>> get activeplayersStream     => _activeplayerController.stream;
 
   dispose() {
     _playerController?.close();
+    _activeplayerController?.close();
   }
 
   getActivePlayers() async {

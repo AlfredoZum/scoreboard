@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return Provider(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'QRReader',
+        title: 'ScoreBoard',
         initialRoute: 'home',
         routes: {
           'home' : (BuildContext context) => HomePage(),

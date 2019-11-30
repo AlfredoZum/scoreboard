@@ -14,8 +14,6 @@ import 'package:scoreboard/src/view/CustomAppBar.dart';
 import 'package:scoreboard/src/config/SizeConfig.dart';
 
 import '../config/SizeConfig.dart';
-import '../config/SizeConfig.dart';
-import '../config/SizeConfig.dart';
 import '../db_provider/DBProvider.dart';
 
 

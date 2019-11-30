@@ -12,6 +12,10 @@ void endGame(){
 
 }
 
+void addPlayers( PlayersBloc playersBloc ){
+
+}
+
 void addPlayers2( PlayersBloc playersBloc ){
 
   List players = [
@@ -47,7 +51,7 @@ class HomeAppBarHome extends AppBar {
       ),
       IconButton(
         icon: Icon( Icons.add ),
-        onPressed: () => addPlayers2( playersBloc ),
+        onPressed: () => addPlayers( playersBloc ),
       )
     ],
   );

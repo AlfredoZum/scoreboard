@@ -31,6 +31,8 @@ class DBProvider {
 
     final path = join( documentsDirectory.path, 'ScoreboardDB.db' );
 
+    print( path );
+
     return await openDatabase(
         path,
         version: 1,
@@ -150,6 +152,22 @@ class DBProvider {
 
     final db  = await database;
     final res = await db.rawQuery("UPDATE Score SET status = 2 where status = 1;");
+    return res;
+
+  }
+
+  deletePlayerOdScore( int scoreId ) async {
+
+    final db  = await database;
+    final res = await db.rawQuery("UPDATE Score SET status = 0 where id = $scoreId;");
+    return res;
+
+  }
+
+  deletePlayer( int playerId ) async {
+
+    final db  = await database;
+    final res = await db.rawQuery("delete from players where id = $playerId;");
     return res;
 
   }

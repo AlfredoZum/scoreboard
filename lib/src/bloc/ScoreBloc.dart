@@ -68,6 +68,8 @@ class ScoreBloc with ScoreValidators {
   updateScoreToPlayer( int playerId, String type, String table ) async {
     await DBProvider.db.updateScoreToPlayer( playerId, type, DateTime.now().toString(), table );
 
+    print( playerId );
+
     if( type == "add" ){
       Map _streaks =  _streaksPlayer.value;
       if( _streaks == null ){
@@ -90,6 +92,14 @@ class ScoreBloc with ScoreValidators {
   endGame() async {
 
     await DBProvider.db.endGame();
+    getActiveScores();
+
+  }
+
+  deletePlayer( int scoreId, int playerId ) async{
+
+    await DBProvider.db.deletePlayerOdScore( scoreId );
+    await DBProvider.db.deletePlayer( playerId );
     getActiveScores();
 
   }

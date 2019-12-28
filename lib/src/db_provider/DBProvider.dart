@@ -127,12 +127,12 @@ class DBProvider {
   }
 
   //agrega un punto al marcador del jugador
-  updateScoreToPlayer( int playerId, String type, String updateAt, String table ) async {
+  updateScoreToPlayer( int playerId, String type, String updateAt, String row ) async {
 
     String mathType = ( type == "add" ) ? "+" : "-";
 
     String setUpdate = "";
-    switch (table) {
+    switch (row) {
       case "score":
         setUpdate = "score = ( score $mathType 1 ), update_at = '$updateAt'";
         break;

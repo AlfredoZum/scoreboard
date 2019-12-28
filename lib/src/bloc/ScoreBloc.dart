@@ -65,25 +65,20 @@ class ScoreBloc with ScoreValidators {
 
   }
 
-  updateScoreToPlayer( int playerId, String type, String table ) async {
-    await DBProvider.db.updateScoreToPlayer( playerId, type, DateTime.now().toString(), table );
+  updateScoreToPlayer( int playerId, String type, String row ) async {
+    await DBProvider.db.updateScoreToPlayer( playerId, type, DateTime.now().toString(), row );
 
-    print( playerId );
-
-    if( type == "add" ){
+    if( type == "add" && row == 'score' ){
       Map _streaks =  _streaksPlayer.value;
       if( _streaks == null ){
         _streaksPlayer.sink.add( { "playerId": playerId, "total": 1 } );
       }else{
-
         if( _streaks['playerId'] == playerId ){
           _streaksPlayer.sink.add( { "playerId": playerId, "total": _streaks['total'] + 1 } );
         }else{
           _streaksPlayer.sink.add( { "playerId": playerId, "total": 1 } );
         }
-
       }
-
     }
 
     getActiveScores();

@@ -360,7 +360,7 @@ class HomePage extends StatelessWidget {
             onTap: () => scoreBloc.updateScoreToPlayer( score.playerId, 'add', 'score' ),
             onLongPress: () => scoreBloc.updateScoreToPlayer( score.playerId, 'remove', 'score' ),
             // The custom button
-            child: scorePlayer( score.score ),
+            child: scorePlayer( score.getScore() ),
           ),
           Container(
             color: Colors.black,

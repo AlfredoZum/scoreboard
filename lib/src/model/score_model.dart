@@ -48,5 +48,13 @@ class ScoreModel {
     "status": status,
   };
 
+  int getScore(){
+
+    double totalAsistence = assistance / 3;
+
+    return score - totalAsistence.toInt();
+
+  }
+
 
 }

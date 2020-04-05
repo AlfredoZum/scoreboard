@@ -20,7 +20,10 @@ class MyApp extends StatelessWidget {
           'home' : (BuildContext context) => HomePage(),
         },
         theme: ThemeData(
-            primaryColor: Colors.green[800]
+            primaryColor: Colors.green[800],
+            primaryColorDark: Colors.green[900],
+            primaryColorLight: Colors.green[400]
+            //primaryColorDark: Colors.green
           //primaryColor: Colors.green[700]
         ),
       ),

@@ -4,6 +4,9 @@ import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
 //Bloc
 import 'package:scoreboard/src/bloc/ScoreBloc.dart';
+import 'package:scoreboard/src/view/players/DialogAddPlayer.dart';
+
+//View
 
 void endGame(){
 
@@ -12,7 +15,15 @@ void endGame(){
 
 }
 
-void addPlayers( PlayersBloc playersBloc ){
+Future addPlayers( PlayersBloc playersBloc, BuildContext context ){
+
+  playersBloc.initEmptyPlayer();
+  return showDialog(
+      context: context,
+      builder: ( context ) {
+        return DialogAddPlayer();
+      }
+  );
 
 }
 
@@ -40,8 +51,9 @@ void addPlayers2( PlayersBloc playersBloc ){
 class HomeAppBarHome extends AppBar {
 
   final PlayersBloc playersBloc;
+  final BuildContext context;
 
-  HomeAppBarHome( { Key key, Widget title, this.playersBloc } ) : super(
+  HomeAppBarHome( { Key key, Widget title, this.playersBloc, this.context } ) : super(
     key: key,
     title: title,
     actions: <Widget>[
@@ -51,7 +63,7 @@ class HomeAppBarHome extends AppBar {
       ),
       IconButton(
         icon: Icon( Icons.add ),
-        onPressed: () => addPlayers( playersBloc ),
+        onPressed: () => addPlayers( playersBloc, context ),
       )
     ],
   );

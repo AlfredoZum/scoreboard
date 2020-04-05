@@ -26,11 +26,9 @@ class Provider extends InheritedWidget {
 
   Provider._internal({ Key key, Widget child }) : super(key: key, child: child );
 
-
   final dbProvider = DBProvider.db.database;
   final playersBloc = new PlayersBloc();
   final _scoreBloc = new ScoreBloc();
-
 
   // Provider({ Key key, Widget child })
   //   : super(key: key, child: child );

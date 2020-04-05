@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:scoreboard/src/config/SizeConfig.dart';
 
 //provider
+import 'package:scoreboard/src/bloc/provider.dart';
 import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
+
 //Bloc
-import 'package:scoreboard/src/bloc/PlayerBloc.dart';
-import 'package:scoreboard/src/bloc/ScoreBloc.dart';
+//import 'package:scoreboard/src/bloc/PlayerBloc.dart';
+//import 'package:scoreboard/src/bloc/ScoreBloc.dart';
 
 //Model
 
@@ -59,14 +61,17 @@ class HomePage extends StatelessWidget {
 
     SizeConfig().init(context);
 
-    final playersBloc = new PlayersBloc();
-    final scoreBloc = new ScoreBloc();
+    /*final playersBloc = new PlayersBloc();
+    final scoreBloc = new ScoreBloc();*/
+
+    final PlayersBloc playersBloc = Provider.of(context);
+    final ScoreBloc scoreBloc = Provider.scoreBloc(context);
 
     scoreBloc.getActiveScores();
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: HomeAppBarHome( title: Text('ScoreBoard'), playersBloc: playersBloc, ),
+      appBar: HomeAppBarHome( title: Text('ScoreBoard'), playersBloc: playersBloc, context: context ),
       body: _screenHome( playersBloc, scoreBloc ),
     );
 
@@ -170,15 +175,15 @@ class HomePage extends StatelessWidget {
     score2.sort((a,b) => b.updateAt.compareTo(a.updateAt));
 
     var maxScore = scores.toList();
-    maxScore.sort((a,b) => b.score.compareTo(a.score));
+    maxScore.sort((a,b) => b.getScore().compareTo(a.getScore()));
 
     var minScore = scores.toList();
-    minScore.sort((a,b) => a.score.compareTo(b.score));
+    minScore.sort((a,b) => a.getScore().compareTo(b.getScore()));
 
     return TableRow(
         children: [
-          ( scores[index] == null ) ? null : _cardPlayer( context, scores[index], scoreBloc, score2[0].playerId, maxScore[0].score, minScore[0].score ),
-          ( ( scores.length - 1 ) < index + 1 ) ? Container() : _cardPlayer( context, scores[index + 1], scoreBloc, score2[0].playerId, maxScore[0].score, minScore[0].score ),
+          ( scores[index] == null ) ? null : _cardPlayer( context, scores[index], scoreBloc, score2[0].playerId, maxScore[0].getScore(), minScore[0].getScore() ),
+          ( ( scores.length - 1 ) < index + 1 ) ? Container() : _cardPlayer( context, scores[index + 1], scoreBloc, score2[0].playerId, maxScore[0].getScore(), minScore[0].getScore() ),
         ].where( ( item ) => item != null ).toList()
     );
   }
@@ -214,9 +219,9 @@ class HomePage extends StatelessWidget {
 
     String imgIcon;
 
-    if( scores.score == minScore ){
+    if( scores.getScore() == minScore ){
       imgIcon = "icons8-pavo-96.png";
-    }else if( scores.score != 0 && scores.score == maxScore ){
+    }else if( scores.getScore() != 0 && scores.getScore() == maxScore ){
       imgIcon = "trophy.png";
     }
 
@@ -323,13 +328,57 @@ class HomePage extends StatelessWidget {
           topLeft: const Radius.circular(20.0),
           topRight: const Radius.circular(20.0)
       ),
-      child: FadeInImage(
-        image: AssetImage( 'assets/players/$image' ),
-        placeholder: AssetImage('assets/img/loading.gif'),
-        fit: BoxFit.cover,
-      ),
+      /*child: CachedNetworkImage(
+        imageUrl: 'assets/players/$image',
+        placeholder: (context, url) => CircularProgressIndicator(),
+        errorWidget: (context, url, error) => Icon(Icons.error),
+      ),*/
+      child: ( image == 'alfredo.jpg' || image == 'polanco.jpg' || image == 'marcos.jpg' || image == 'cach.jpg' ) ? imaAssest( image ) : imgFile(),
     ),
   );
+
+  Widget imaAssest( String image ){
+
+    /*return StreamBuilder<List<ScoreModel>>(
+
+        stream: scoreBloc.scoreStream,
+        builder: (BuildContext context, AsyncSnapshot<List<ScoreModel>> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final List<ScoreModel> scores = snapshot.data;
+
+          if (scores.length == 0) {
+            return Center(
+              child: Text('No hay información'),
+            );
+          }
+
+          /*var score2 = scores;
+
+          score2.sort((a, b) => b.updateAt.compareTo(a.updateAt));*/
+
+          return ;
+
+        }
+
+    );*/
+
+    return FadeInImage(
+      image: AssetImage( 'assets/players/$image' ),
+      placeholder: AssetImage('assets/img/no-image.jpg'),
+      fit: BoxFit.cover,
+    );
+  }
+
+  Widget imgFile(){
+    return FadeInImage(
+      image: AssetImage( 'assets/img/no-image.jpg' ),
+      placeholder: AssetImage('assets/img/no-image.jpg'),
+      fit: BoxFit.cover,
+    );
+  }
 
   Widget _namePlayer( BuildContext context, String name ) => Container(
     padding: EdgeInsets.all( SizeConfig.padding10 / 2 ),

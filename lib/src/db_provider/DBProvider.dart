@@ -31,7 +31,7 @@ class DBProvider {
 
     final path = join( documentsDirectory.path, 'ScoreboardDB.db' );
 
-    print( path );
+    //print( path );
 
     return await openDatabase(
         path,

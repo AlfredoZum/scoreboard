@@ -1,13 +1,17 @@
+import 'dart:io';
+
 class PlayerModel {
 
   int id;
   String name;
   String image;
+  File fileImage;
 
   PlayerModel({
     this.id,
     this.name,
     this.image,
+    this.fileImage,
   });
 
   factory PlayerModel.fromJson(Map<String, dynamic> json) => new PlayerModel(
@@ -21,6 +25,5 @@ class PlayerModel {
     "name" : name,
     "image": image,
   };
-
 
 }

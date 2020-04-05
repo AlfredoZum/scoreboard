@@ -53,8 +53,8 @@ FLUTTER_EXPORT
  * The initialized viewcontroller will attach itself to the engine as part of this process.
  *
  * @param engine The `FlutterEngine` instance to attach to.
- * @param nibNameOrNil The NIB name to initialize this UIViewController with.
- * @param nibBundleOrNil The NIB bundle.
+ * @param nibName The NIB name to initialize this UIViewController with.
+ * @param nibBundle The NIB bundle.
  */
 - (instancetype)initWithEngine:(FlutterEngine*)engine
                        nibName:(nullable NSString*)nibName
@@ -64,9 +64,9 @@ FLUTTER_EXPORT
  * Initializes a new FlutterViewController and `FlutterEngine` with the specified
  * `FlutterDartProject`.
  *
- * @param projectOrNil The `FlutterDartProject` to initialize the `FlutterEngine` with.
- * @param nibNameOrNil The NIB name to initialize this UIViewController with.
- * @param nibBundleOrNil The NIB bundle.
+ * @param project The `FlutterDartProject` to initialize the `FlutterEngine` with.
+ * @param nibName The NIB name to initialize this UIViewController with.
+ * @param nibBundle The NIB bundle.
  */
 - (instancetype)initWithProject:(nullable FlutterDartProject*)project
                         nibName:(nullable NSString*)nibName
@@ -105,11 +105,15 @@ FLUTTER_EXPORT
 - (NSString*)lookupKeyForAsset:(NSString*)asset fromPackage:(NSString*)package;
 
 /**
- * Sets the first route that the Flutter app shows. The default is "/".
- * This method will guarnatee that the initial route is delivered, even if the
- * Flutter window hasn't been created yet when called. It cannot be used to update
- * the current route being shown in a visible FlutterViewController (see pushRoute
- * and popRoute).
+ * Attempts to set the first route that the Flutter app shows if the Flutter
+ * runtime hasn't yet started. The default is "/".
+ *
+ * This method must be called immediately after `initWithProject` and has no
+ * effect when using `initWithEngine` if the `FlutterEngine` has already been
+ * run.
+ *
+ * Setting this after the Flutter started running has no effect. See `pushRoute`
+ * and `popRoute` to change the route after Flutter started running.
  *
  * @param route The name of the first route to show.
  */

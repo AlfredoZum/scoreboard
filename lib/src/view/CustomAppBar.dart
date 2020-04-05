@@ -2,7 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:scoreboard/src/bloc/PlayerBloc.dart';
 import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
-void addPlayers( PlayersBloc playersBloc ){
+//Bloc
+import 'package:scoreboard/src/bloc/ScoreBloc.dart';
+import 'package:scoreboard/src/view/players/DialogAddPlayer.dart';
+
+//View
+
+void endGame(){
+
+  final ScoreBloc scoreBloc = new ScoreBloc();
+  scoreBloc.endGame();
+
+}
+
+Future addPlayers( PlayersBloc playersBloc, BuildContext context ){
+
+  playersBloc.initEmptyPlayer();
+  return showDialog(
+      context: context,
+      builder: ( context ) {
+        return DialogAddPlayer();
+      }
+  );
 
 }
 
@@ -22,23 +43,27 @@ void addPlayers2( PlayersBloc playersBloc ){
 
   });
 
+  final ScoreBloc scoreBloc = new ScoreBloc();
+  scoreBloc.getActiveScores();
+
 }
 
 class HomeAppBarHome extends AppBar {
 
   final PlayersBloc playersBloc;
+  final BuildContext context;
 
-  HomeAppBarHome( { Key key, Widget title, this.playersBloc } ) : super(
+  HomeAppBarHome( { Key key, Widget title, this.playersBloc, this.context } ) : super(
     key: key,
     title: title,
     actions: <Widget>[
       IconButton(
         icon: Icon( Icons.stop ),
-        onPressed: () => addPlayers( playersBloc ),
+        onPressed: () => endGame(),
       ),
       IconButton(
         icon: Icon( Icons.add ),
-        onPressed: () => addPlayers2( playersBloc ),
+        onPressed: () => addPlayers( playersBloc, context ),
       )
     ],
   );

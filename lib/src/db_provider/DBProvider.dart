@@ -25,18 +25,22 @@ class DBProvider {
     return _database;
   }
 
-
   initDB() async {
 
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
     final path = join( documentsDirectory.path, 'ScoreboardDB.db' );
 
+    //print( path );
+
     return await openDatabase(
         path,
         version: 1,
+        //onOpen: _onOpen,
+        //onUpgrade: _onUpdate,
         onOpen: (db) {},
         onCreate: ( Database db, int version ) async {
+
           await db.execute(
               'CREATE TABLE players ('
                   ' id INTEGER PRIMARY KEY,'
@@ -50,8 +54,10 @@ class DBProvider {
                   ' id INTEGER PRIMARY KEY,'
                   ' playerId INTEGER,'
                   ' score INTEGER,'
-                  ' date TEXT,'
+                  ' create_at TEXT,'
+                  ' update_at TEXT,'
                   ' interval INTEGER,'
+                  ' assistance INTEGER DEFAULT 0,'
                   ' status INTEGER'
                   ')'
           );
@@ -80,10 +86,21 @@ class DBProvider {
     return list;
   }
 
+  Future<List<PlayerModel>> getActivePlayers() async {
+
+    final db  = await database;
+    final res = await db.rawQuery("SELECT players.*, score.score FROM players INNER JOIN score on score.playerId = players.id where score.status = 1;");
+
+    List<PlayerModel> list = res.isNotEmpty
+        ? res.map( (c) => PlayerModel.fromJson(c) ).toList()
+        : [];
+    return list;
+  }
+
   Future<List<ScoreModel>> getActiveScores() async {
 
     final db  = await database;
-    final res = await db.rawQuery("SELECT * FROM score WHERE status = '1';");
+    final res = await db.rawQuery("SELECT score.*, players.name as playerName, players.image as playerImage  FROM score  INNER JOIN players on players.id = score.playerId WHERE status = '1';");
 
     List<ScoreModel> list = res.isNotEmpty
         ? res.map( (c) => ScoreModel.fromJson(c) ).toList()
@@ -108,5 +125,52 @@ class DBProvider {
     final res = await db.insert('score',  scoreModel.toJson() );
     return res;
   }
+
+  //agrega un punto al marcador del jugador
+  updateScoreToPlayer( int playerId, String type, String updateAt, String row ) async {
+
+    String mathType = ( type == "add" ) ? "+" : "-";
+
+    String setUpdate = "";
+    switch (row) {
+      case "score":
+        setUpdate = "score = ( score $mathType 1 ), update_at = '$updateAt'";
+        break;
+      case "assistance":
+        setUpdate = "assistance = ( assistance $mathType 1 )";
+        break;
+    }
+
+    final db  = await database;
+    final res = await db.rawQuery("UPDATE Score SET $setUpdate WHERE playerId = $playerId and status = 1");
+    //final res = await db.insert('score',  scoreModel.toJson() );
+    return res;
+  }
+
+  //inserta los nuevos jugadores
+  endGame() async {
+
+    final db  = await database;
+    final res = await db.rawQuery("UPDATE Score SET status = 2 where status = 1;");
+    return res;
+
+  }
+
+  deletePlayerOdScore( int scoreId ) async {
+
+    final db  = await database;
+    final res = await db.rawQuery("UPDATE Score SET status = 0 where id = $scoreId;");
+    return res;
+
+  }
+
+  deletePlayer( int playerId ) async {
+
+    final db  = await database;
+    final res = await db.rawQuery("delete from players where id = $playerId;");
+    return res;
+
+  }
+
 
 }

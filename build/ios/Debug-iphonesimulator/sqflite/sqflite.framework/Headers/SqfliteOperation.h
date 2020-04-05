@@ -4,7 +4,7 @@
 //
 //  Created by Alexandre Roux on 09/01/2018.
 //
-#import <Flutter/Flutter.h>
+#import "SqflitePlugin.h"
 
 #ifndef SqfliteOperation_h
 #define SqfliteOperation_h

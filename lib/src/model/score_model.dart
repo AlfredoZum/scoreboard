@@ -2,16 +2,24 @@ class ScoreModel {
 
   int id;
   int playerId;
+  String playerName;
+  String playerImage;
   int score;
-  String date;
+  int assistance;
+  String createAt;
+  String updateAt;
   int interval;
   int status;
 
   ScoreModel({
     this.id,
     this.playerId,
+    this.playerName,
+    this.playerImage,
     this.score,
-    this.date,
+    this.assistance,
+    this.createAt,
+    this.updateAt,
     this.interval,
     this.status,
   });
@@ -19,8 +27,12 @@ class ScoreModel {
   factory ScoreModel.fromJson(Map<String, dynamic> json) => new ScoreModel(
     id   : json["id"],
     playerId : json["playerId"],
+    playerName: json["playerName"],
+    playerImage: json["playerImage"],
     score: json["score"],
-    date: json["date"],
+    assistance: json["assistance"],
+    createAt: json["create_at"],
+    updateAt: json["update_at"],
     interval: json["interval"],
     status: json["status"],
   );
@@ -29,10 +41,20 @@ class ScoreModel {
     "id"   : id,
     "playerId" : playerId,
     "score": score,
-    "date": date,
+    "assistance": assistance,
+    "create_at": createAt,
+    "update_at": updateAt,
     "interval": interval,
     "status": status,
   };
+
+  int getScore(){
+
+    double totalAsistence = assistance / 3;
+
+    return score - totalAsistence.toInt();
+
+  }
 
 
 }

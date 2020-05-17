@@ -11,6 +11,7 @@ import 'package:scoreboard/src/model/score_model.dart';
 
 //Components
 import 'package:scoreboard/src/view/components/HomeComponents.dart';
+import 'package:scoreboard/src/view/home/components/Alerts.dart';
 
 class PlayersGrid extends StatelessWidget {
 
@@ -119,7 +120,7 @@ class PlayersGrid extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         // When the child is tapped, show a snackbar.
-        onLongPress: () => _alertDeletePlayer( context, scores, homeBloc ),
+        onLongPress: () => alertDeletePlayer( context, scores, homeBloc ),
         // The custom button
         child: Stack(
           children: <Widget>[

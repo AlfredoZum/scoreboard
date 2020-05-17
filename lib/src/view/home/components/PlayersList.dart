@@ -11,6 +11,7 @@ import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
 //Components
 import 'package:scoreboard/src/view/components/HomeComponents.dart';
+import 'package:scoreboard/src/view/home/components/Alerts.dart';
 
 class PlayersList extends StatelessWidget {
 
@@ -25,15 +26,13 @@ class PlayersList extends StatelessWidget {
     return ListView.builder(
       itemCount: totalPlayers,
       itemBuilder: ( BuildContext cxt, int index ){
-
-        return _cardPlayer( scores[index] );
-
+        return _cardPlayer( context, scores[index] );
       },
     );
   }
 
   //Show card by player
-  Widget _cardPlayer( ScoreModel score ){
+  Widget _cardPlayer( BuildContext context, ScoreModel score ){
 
     List<ScoreModel> maxScore = scores.toList();
     maxScore.sort((a,b) => b.getScore().compareTo(a.getScore()));
@@ -42,6 +41,7 @@ class PlayersList extends StatelessWidget {
     minScore.sort((a,b) => a.getScore().compareTo(b.getScore()));
 
     return GestureDetector(
+      onLongPress: () => alertDeletePlayer( context, score, homeBloc ),
       child: Container(
         padding: EdgeInsets.all( SizeConfig.padding10 / 2 ),
         width: double.infinity,

@@ -18,7 +18,7 @@
 
 # Visual Studio Code related
 .vscode/
-.project
+project
 
 # Flutter repo-specific
 /bin/cache/
@@ -37,6 +37,8 @@ version
 
 # packages file containing multi-root paths
 .packages.generated
+/packages/flutter/coverage/
+version
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -92,6 +94,9 @@ unlinked_spec.ds
 
 # Coverage
 coverage/
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
@@ -100,3 +105,4 @@ coverage/
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages

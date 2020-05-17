@@ -3,26 +3,12 @@ import 'package:rxdart/rxdart.dart';
 import 'dart:io';
 
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
 //provider
 import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
 class PlayersBloc {
-
-  /*static final PlayersBloc _singleton = new PlayersBloc._internal();
-
-  factory PlayersBloc() {
-    return _singleton;
-  }
-
-  PlayersBloc._internal() {
-    getActivePlayers();
-  }*/
-
-  /*final _playerController = StreamController<List<PlayerModel>>.broadcast();
-  final _activeplayerController = StreamController<List<PlayerModel>>.broadcast();*/
 
   final _playerController    = BehaviorSubject<List<PlayerModel>>();
   final _activeplayerController = BehaviorSubject<List<PlayerModel>>();
@@ -44,15 +30,18 @@ class PlayersBloc {
     _addPlayersController?.close();
   }
 
+  //get the player active in the current game
   getActivePlayers() async {
     _activeplayerController.sink.add( await DBProvider.db.getActivePlayers()  );
   }
 
+  //Add a player to the db
   addPlayer( PlayerModel player ) async{
     await DBProvider.db.newPlayer( player );
     getActivePlayers();
   }
 
+  //add players
   addPlayers() async {
     List<PlayerModel> players = _addPlayersController.value;
 
@@ -69,13 +58,13 @@ class PlayersBloc {
           if( await Directory(path + '/avatar').exists() ){
             path = join( documentsDirectory.path, 'avatar' );
           }else{
-            var dr = await Directory(path + '/avatar')..create(recursive: true);
+            var dr = Directory(path + '/avatar')..create(recursive: true);
             path = dr.path;
           }
 
           String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
 
-          p.image = '${p.name}_${timestamp}.jpg';
+          p.image = '${p.name}_$timestamp.jpg';
 
           final File newImage = await p.fileImage.copy('$path/${p.image}');
 

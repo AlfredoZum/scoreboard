@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-//Config
-import 'package:scoreboard/src/config/SizeConfig.dart';
-
 //provider
 import 'package:scoreboard/src/bloc/provider.dart';
 

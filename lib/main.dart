@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoreboard/src/bloc/provider.dart';
 
 //View
-import 'package:scoreboard/src/view/HomePage.dart';
+import 'package:scoreboard/src/view/home/HomePage.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,18 +28,5 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
-
-    /*return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'QRReader',
-      initialRoute: 'home',
-      routes: {
-        'home' : (BuildContext context) => HomePage(),
-      },
-      theme: ThemeData(
-        primaryColor: Colors.green[800]
-          //primaryColor: Colors.green[700]
-      ),
-    );*/
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+String urlImageLocal = '';
+
 bool isNumeric( String s ) {
 
   if ( s.isEmpty ) return false;

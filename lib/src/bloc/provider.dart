@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:scoreboard/src/bloc/PlayerBloc.dart';
 export 'package:scoreboard/src/bloc/PlayerBloc.dart';
 
-import 'package:scoreboard/src/bloc/ScoreBloc.dart';
-export 'package:scoreboard/src/bloc/ScoreBloc.dart';
+import 'package:scoreboard/src/bloc/HomeBloc.dart';
+export 'package:scoreboard/src/bloc/HomeBloc.dart';
 
 //DB
 import 'package:scoreboard/src/db_provider/DBProvider.dart';
@@ -28,7 +28,7 @@ class Provider extends InheritedWidget {
 
   final dbProvider = DBProvider.db.database;
   final playersBloc = new PlayersBloc();
-  final _scoreBloc = new ScoreBloc();
+  final _homeBloc = new HomeBloc();
 
   // Provider({ Key key, Widget child })
   //   : super(key: key, child: child );
@@ -38,11 +38,11 @@ class Provider extends InheritedWidget {
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
 
   static PlayersBloc of ( BuildContext context ) {
-    return ( context.inheritFromWidgetOfExactType(Provider) as Provider ).playersBloc;
+    return ( context.dependOnInheritedWidgetOfExactType<Provider>() ).playersBloc;
   }
 
-  static ScoreBloc scoreBloc ( BuildContext context ) {
-    return ( context.inheritFromWidgetOfExactType(Provider) as Provider )._scoreBloc;
+  static HomeBloc homeBloc ( BuildContext context ) {
+    return ( context.dependOnInheritedWidgetOfExactType<Provider>() )._homeBloc;
   }
 
 }

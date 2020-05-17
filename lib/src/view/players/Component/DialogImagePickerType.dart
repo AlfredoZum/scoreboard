@@ -9,7 +9,6 @@ import 'package:scoreboard/src/config/SizeConfig.dart';
 
 //Provider
 import 'package:scoreboard/src/bloc/provider.dart';
-import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
 class DialogImagePickerType extends StatelessWidget {
 

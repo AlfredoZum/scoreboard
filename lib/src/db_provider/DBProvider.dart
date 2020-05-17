@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,6 +8,9 @@ import '../model/player_model.dart';
 export '../model/player_model.dart';
 import '../model/score_model.dart';
 export '../model/score_model.dart';
+
+//Config
+import 'package:scoreboard/src/config/Utils.dart';
 
 class DBProvider {
 
@@ -28,6 +30,8 @@ class DBProvider {
   initDB() async {
 
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
+
+    urlImageLocal = documentsDirectory.path;
 
     final path = join( documentsDirectory.path, 'ScoreboardDB.db' );
 

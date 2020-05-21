@@ -28,3 +28,4 @@ void alertDeletePlayer(BuildContext context, ScoreModel score, HomeBloc homeBloc
   );
 
 }
+

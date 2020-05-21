@@ -35,6 +35,7 @@ class HomeBloc with ScoreValidators {
     _typeView?.close();
   }
 
+  //Get the player and score of current game
   getActiveScores() async {
 
     final _activeScore = await DBProvider.db.getActiveScores();
@@ -59,17 +60,14 @@ class HomeBloc with ScoreValidators {
     _scoreController.sink.add( await DBProvider.db.getActiveScores()  );
   }
 
-  getLastPlayerWin( int playerId, String type ) async {
+  /*
+  * updatebthe score of player
+  * @params playerId id of player ( user )
+  * @params type add or remove score
+  * @params row type score ( score or assistance )
+  * */
 
-  }
-
-  addStreaksPlayer(){
-
-    //streaksPlayer
-
-  }
-
-  updateScoreToPlayer( int playerId, String type, String row ) async {
+  updatePlayerScore( int playerId, String type, String row ) async {
     await DBProvider.db.updateScoreToPlayer( playerId, type, DateTime.now().toString(), row );
 
     if( type == "add" && row == 'score' ){
@@ -88,17 +86,52 @@ class HomeBloc with ScoreValidators {
     getActiveScores();
   }
 
+  //finish the game
   endGame() async {
     await DBProvider.db.endGame();
     getActiveScores();
   }
 
+  //get the score of player ( max, min, )
+  getScores(){
+
+    List<ScoreModel> scores = _scoreController.value;
+    //List<ScoreModel> score2 = scores.toList();
+    //score2.sort((a,b) => b.updateAt.compareTo(a.updateAt));
+
+    List<ScoreModel> maxScore = scores.toList();
+    maxScore.sort((a,b) => b.getScore().compareTo(a.getScore()));
+
+    List<ScoreModel> minScore = scores.toList();
+    minScore.sort((a,b) => a.getScore().compareTo(b.getScore()));
+
+    return [ maxScore, minScore ];
+
+  }
+
+  //get the player winners and losers in the active game
+  List<List<ScoreModel>> getFinalScore(){
+
+    List<List<ScoreModel>> finalScores = getScores();
+
+    List<ScoreModel> maxScore = finalScores[0];
+    List<ScoreModel> minScore = finalScores[1];
+
+    List<ScoreModel> winners = maxScore.where( ( s ) => s.score == maxScore[0].score ).toList();
+    List<ScoreModel> losers = minScore.where( ( s ) => s.score == minScore[0].score ).toList();
+
+    return [winners, losers];
+
+  }
+
+  //delete the selected player
   deletePlayer( int scoreId, int playerId ) async{
     await DBProvider.db.deletePlayerOdScore( scoreId );
     await DBProvider.db.deletePlayer( playerId );
     getActiveScores();
   }
 
+  //change the type of view in the score home ( list or grid )
   changeTypeView(){
     final String type = _typeView.value == 'list' ? 'grid' : 'list';
     _typeView.sink.add( type );

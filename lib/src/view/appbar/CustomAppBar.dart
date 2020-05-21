@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scoreboard/src/bloc/PlayerBloc.dart';
-import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
 //Bloc
 import 'package:scoreboard/src/bloc/HomeBloc.dart';
 import 'package:scoreboard/src/view/players/DialogAddPlayer.dart';
+import 'package:scoreboard/src/view/home/components/DialogStopGame.dart';
 
 //View
 
-void endGame(){
+//Muestra un dialogo para finalizar la partida
+Future showDialogEndGame( BuildContext context ){
 
-  final HomeBloc homeBloc = new HomeBloc();
-  homeBloc.endGame();
+  return showDialog(
+      context: context,
+      builder: ( context ) {
+        return DialogStopGame();
+      }
+  );
 
 }
 
+//Muestra un dialogo para agregar jugadores
 Future addPlayers( PlayersBloc playersBloc, BuildContext context ){
 
   playersBloc.initEmptyPlayer();
@@ -25,27 +31,6 @@ Future addPlayers( PlayersBloc playersBloc, BuildContext context ){
         return DialogAddPlayer();
       }
   );
-
-}
-
-void addPlayers2( PlayersBloc playersBloc ){
-
-  List players = [
-    [ 'Alfredo', 'alfredo.jpg' ],
-    [ 'Polanco', 'polanco.jpg' ],
-    [ 'Marcos', 'marcos.jpg' ],
-    [ 'Cach', 'cach.jpg' ],
-  ];
-
-  players.forEach( (p){
-
-    final player = PlayerModel( name: p[0], image: p[1] );
-    playersBloc.addPlayer(player);
-
-  });
-
-  final HomeBloc homeBloc = new HomeBloc();
-  homeBloc.getActiveScores();
 
 }
 
@@ -61,7 +46,7 @@ class HomeAppBarHome extends AppBar {
     actions: <Widget>[
       IconButton(
         icon: Icon( Icons.stop ),
-        onPressed: () => endGame(),
+        onPressed: () => showDialogEndGame( context ),
       ),
       IconButton(
         icon: Icon( Icons.add ),

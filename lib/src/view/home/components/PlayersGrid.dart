@@ -21,33 +21,6 @@ class PlayersGrid extends StatelessWidget {
 
   PlayersGrid( this.scores, this.homeBloc, this.totalPlayers );
 
-  void _alertDeletePlayer(BuildContext context, ScoreModel scores, HomeBloc homeBloc ) {
-
-    showDialog(
-        context: context,
-        builder: ( context ) {
-          return AlertDialog(
-            title: Text('Eliminar al jugador'),
-            content: Text('¿Deseas eliminar al jugador?'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Cancelar'),
-                onPressed: ()=> Navigator.of(context).pop(),
-              ),
-              FlatButton(
-                child: Text('Eliminar'),
-                onPressed: () async{
-                  await homeBloc.deletePlayer( scores.id, scores.playerId );
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        }
-    );
-
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -239,8 +212,8 @@ class PlayersGrid extends StatelessWidget {
         children: <Widget>[
           GestureDetector(
             // When the child is tapped, show a snackbar.
-            onTap: () => homeBloc.updateScoreToPlayer( score.playerId, 'add', 'score' ),
-            onLongPress: () => homeBloc.updateScoreToPlayer( score.playerId, 'remove', 'score' ),
+            onTap: () => homeBloc.updatePlayerScore( score.playerId, 'add', 'score' ),
+            onLongPress: () => homeBloc.updatePlayerScore( score.playerId, 'remove', 'score' ),
             // The custom button
             child: scorePlayer( score.getScore() ),
           ),
@@ -251,8 +224,8 @@ class PlayersGrid extends StatelessWidget {
           ),
           GestureDetector(
             // When the child is tapped, show a snackbar.
-            onTap: () => homeBloc.updateScoreToPlayer( score.playerId, 'add', 'assistance' ),
-            onLongPress: () => homeBloc.updateScoreToPlayer( score.playerId, 'remove', 'assistance' ),
+            onTap: () => homeBloc.updatePlayerScore( score.playerId, 'add', 'assistance' ),
+            onLongPress: () => homeBloc.updatePlayerScore( score.playerId, 'remove', 'assistance' ),
             // The custom button
             child: scorePlayer( score.assistance ),
           ),

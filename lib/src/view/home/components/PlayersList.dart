@@ -156,8 +156,8 @@ class PlayersList extends StatelessWidget {
         children: <Widget>[
           GestureDetector(
             // When the child is tapped, show a snackbar.
-            onTap: () => homeBloc.updateScoreToPlayer( score.playerId, 'add', 'score' ),
-            onLongPress: () => homeBloc.updateScoreToPlayer( score.playerId, 'remove', 'score' ),
+            onTap: () => homeBloc.updatePlayerScore( score.playerId, 'add', 'score' ),
+            onLongPress: () => homeBloc.updatePlayerScore( score.playerId, 'remove', 'score' ),
             // The custom button
             child: scorePlayer( score.getScore() ),
           ),
@@ -168,8 +168,8 @@ class PlayersList extends StatelessWidget {
           ),
           GestureDetector(
             // When the child is tapped, show a snackbar.
-            onTap: () => homeBloc.updateScoreToPlayer( score.playerId, 'add', 'assistance' ),
-            onLongPress: () => homeBloc.updateScoreToPlayer( score.playerId, 'remove', 'assistance' ),
+            onTap: () => homeBloc.updatePlayerScore( score.playerId, 'add', 'assistance' ),
+            onLongPress: () => homeBloc.updatePlayerScore( score.playerId, 'remove', 'assistance' ),
             // The custom button
             child: scorePlayer( score.assistance ),
           ),

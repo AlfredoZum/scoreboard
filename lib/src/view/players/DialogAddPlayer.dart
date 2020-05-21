@@ -16,6 +16,7 @@ class DialogAddPlayer extends StatelessWidget {
     final PlayersBloc playersBloc = Provider.of(context);
 
     return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       title: Text('Añadir Jugadores'),
       content: AddPlayers(),
       actions: <Widget>[

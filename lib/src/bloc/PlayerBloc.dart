@@ -66,7 +66,7 @@ class PlayersBloc {
 
           p.image = '${p.name}_$timestamp.jpg';
 
-          final File newImage = await p.fileImage.copy('$path/${p.image}');
+          await p.fileImage.copy('$path/${p.image}');
 
         }
 
@@ -99,7 +99,7 @@ class PlayersBloc {
 
   }
 
-  changeImgAddPlayer( image, int index ) async{
+  changeImgAddPlayer( File image, int index ) async{
     List<PlayerModel> players = _addPlayersController.value;
     players[index].fileImage = image;
     _addPlayersController.add( players );

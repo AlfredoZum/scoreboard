@@ -27,15 +27,13 @@ class DBProvider {
     return _database;
   }
 
-  initDB() async {
+  Future<Database> initDB() async {
 
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
     urlImageLocal = documentsDirectory.path;
 
     final path = join( documentsDirectory.path, 'ScoreboardDB.db' );
-
-    //print( path );
 
     return await openDatabase(
         path,
@@ -46,16 +44,40 @@ class DBProvider {
         onCreate: ( Database db, int version ) async {
 
           await db.execute(
+              'CREATE TABLE games ('
+                  ' id INTEGER PRIMARY KEY,'
+                  ' name TEXT,'
+                  ' create_at TEXT,'
+                  ' update_at TEXT,'
+                  ' status INTEGER'
+                  ')'
+          );
+
+          await db.execute(
+              'CREATE TABLE gamesPlayed ('
+                  ' id INTEGER PRIMARY KEY,'
+                  ' gamesId INTEGER,'
+                  ' create_at TEXT,'
+                  ' update_at TEXT,'
+                  ' status INTEGER'
+                  ')'
+          );
+
+          await db.execute(
               'CREATE TABLE players ('
                   ' id INTEGER PRIMARY KEY,'
                   ' name TEXT,'
                   ' image TEXT'
+                  ' create_at TEXT,'
+                  ' update_at TEXT, '
+                  ' status INTEGER'
                   ')'
           );
 
           await db.execute(
               'CREATE TABLE score ('
                   ' id INTEGER PRIMARY KEY,'
+                  ' gamesPlayedId INTEGER,'
                   ' playerId INTEGER,'
                   ' score INTEGER,'
                   ' create_at TEXT,'
@@ -71,6 +93,12 @@ class DBProvider {
     );
 
   }
+
+  //////////////////////////
+  //        games         //
+  //////////////////////////
+
+  
 
   //inserta los nuevos jugadores
   newPlayer( PlayerModel playerModel ) async {
@@ -104,7 +132,7 @@ class DBProvider {
   Future<List<ScoreModel>> getActiveScores() async {
 
     final db  = await database;
-    final res = await db.rawQuery("SELECT score.*, players.name as playerName, players.image as playerImage  FROM score  INNER JOIN players on players.id = score.playerId WHERE status = '1';");
+    final res = await db.rawQuery("SELECT score.*, players.name as playerName, players.image as playerImage  FROM score  INNER JOIN players on players.id = score.playerId WHERE score.status = '1';");
 
     List<ScoreModel> list = res.isNotEmpty
         ? res.map( (c) => ScoreModel.fromJson(c) ).toList()

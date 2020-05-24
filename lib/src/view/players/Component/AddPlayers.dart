@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 //Config
@@ -162,7 +164,7 @@ class AddPlayers extends StatelessWidget {
 
   }
 
-  Widget _imgFile( fileImage ){
+  Widget _imgFile( File fileImage ){
 
     return Image.file( fileImage );
 

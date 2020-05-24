@@ -15,9 +15,9 @@ class PlayerModel {
   });
 
   factory PlayerModel.fromJson(Map<String, dynamic> json) => new PlayerModel(
-    id   : json["id"],
-    name : json["name"],
-    image: json["image"],
+    id   : int.tryParse( json["id"].toString() ),
+    name : json["name"].toString(),
+    image: json["image"].toString(),
   );
 
   Map<String, dynamic> toJson() => {

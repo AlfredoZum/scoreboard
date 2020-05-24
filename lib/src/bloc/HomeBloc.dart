@@ -93,7 +93,7 @@ class HomeBloc with ScoreValidators {
   }
 
   //get the score of player ( max, min, )
-  getScores(){
+  List<List<ScoreModel>> getScores(){
 
     List<ScoreModel> scores = _scoreController.value;
     //List<ScoreModel> score2 = scores.toList();

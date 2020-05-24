@@ -56,7 +56,7 @@ class HomeAppBarHome extends AppBar {
     ],
   );
 
-  static _iconTypeView(){
+  static Widget _iconTypeView(){
 
     final HomeBloc homeBloc = new HomeBloc();
 

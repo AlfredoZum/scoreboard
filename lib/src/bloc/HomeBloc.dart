@@ -6,6 +6,7 @@ import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
 //validators
 import 'package:scoreboard/src/bloc/ScoreValidators.dart';
+import 'package:scoreboard/src/model/game_model.dart';
 
 class HomeBloc with ScoreValidators {
 
@@ -19,21 +20,53 @@ class HomeBloc with ScoreValidators {
     getActiveScores();
   }
 
+  final _gamesController = BehaviorSubject<List<GameModel>>();
+  final _settingController = BehaviorSubject<SettingModel>();
   final _scoreController = BehaviorSubject<List<ScoreModel>>();
   final _streaksPlayer = BehaviorSubject<Map>();
 
   final _typeView = BehaviorSubject<String>();
+  final _initApp = BehaviorSubject<bool>();
 
+  Stream<List<GameModel>> get gamesStream => _gamesController.stream;
+  Stream<SettingModel> get settingStream => _settingController.stream;
   Stream<List<ScoreModel>> get scoreStream => _scoreController.stream;
   Stream<Map> get streaksPlayer => _streaksPlayer.stream;
 
   Stream<String> get typeView => _typeView.stream;
+  Stream<bool> get initApp => _initApp.stream;
+
+  Stream<List> get getInfoHome  =>
+      Rx.combineLatest3(gamesStream, settingStream, initApp,  ( g, s, i ) => [ g, s, i ] );
 
   dispose() {
     _scoreController?.close();
     _streaksPlayer?.close();
     _typeView?.close();
   }
+
+  changeInitApp( bool value ){
+    _initApp.sink.add( value );
+  }
+
+  getInitGame() async {
+
+    final _activeGame = await DBProvider.db.getActiveGame();
+    final _setting = await DBProvider.db.getSetting();
+
+    if( _initApp.value == null ){
+      _initApp.sink.add( false );
+    }
+
+    if( _activeGame.length == 0 ){
+
+    }
+
+    _settingController.sink.add( _setting );
+    _gamesController.sink.add( _activeGame );
+
+  }
+
 
   //Get the player and score of current game
   getActiveScores() async {

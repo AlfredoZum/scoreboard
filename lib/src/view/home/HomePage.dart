@@ -17,8 +17,7 @@ import 'package:scoreboard/src/db_provider/DBProvider.dart';
 import 'package:scoreboard/src/view/appbar/CustomAppBar.dart';
 
 //Components
-import 'package:scoreboard/src/view/home/components/PlayersGrid.dart';
-import 'package:scoreboard/src/view/home/components/PlayersList.dart';
+import 'package:scoreboard/src/view/home/components/components.dart';
 
 class HomePage extends StatelessWidget {
 
@@ -40,17 +39,92 @@ class HomePage extends StatelessWidget {
     final PlayersBloc playersBloc = Provider.of(context);
     final HomeBloc homeBloc = Provider.homeBloc(context);
 
-    homeBloc.getActiveScores();
+    homeBloc.getInitGame();
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: HomeAppBarHome( title: Text('ScoreBoard'), playersBloc: playersBloc,  homeBloc: homeBloc, context: context ),
-      body: _screenHome( playersBloc, homeBloc ),
+      body: _screenHome( playersBloc, homeBloc, context ),
     );
 
   }
 
-  Widget _screenHome( PlayersBloc playersBloc, HomeBloc homeBloc ){
+  void _showDialog( BuildContext context ) {
+
+    print( "aqui show dialog" );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Alert Dialog title"),
+          content: new Text("Alert Dialog body"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+  }
+
+  Widget _screenHome( PlayersBloc playersBloc, HomeBloc homeBloc, BuildContext context ){
+
+    return StreamBuilder<List>(
+        stream: homeBloc.getInfoHome,
+        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final List<GameModel> game = snapshot.data[0] as List<GameModel>;
+          final SettingModel setting = snapshot.data[1] as SettingModel;
+          final bool _initApp = snapshot.data[2] as bool;
+
+          if( game.length == 0 ){
+
+            if( setting.firstTime == 1 ){
+
+              /*if( !_initApp ){
+                //WidgetsBinding.instance.addPostFrameCallback((_) => DialogFirstTime());
+
+                homeBloc.changeInitApp( true );
+                //_showDialog( context );
+              }*/
+
+              return BodyFirstTime();
+
+            }
+
+
+
+            return Container();
+          }
+
+          return _buildHome();
+
+        }
+    );
+
+  }
+
+  Widget _buildHome(){
+
+    return Container(
+      child: Text( 'Informacoon obtenida' ),
+    );
+
+  }
+
+  Widget _screenHome2( PlayersBloc playersBloc, HomeBloc homeBloc ){
 
     return StreamBuilder<List<ScoreModel>>(
 

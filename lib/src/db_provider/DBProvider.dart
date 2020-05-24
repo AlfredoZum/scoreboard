@@ -1,13 +1,18 @@
 import 'dart:io';
 import 'package:path/path.dart';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
 //Model
-import '../model/player_model.dart';
-export '../model/player_model.dart';
-import '../model/score_model.dart';
-export '../model/score_model.dart';
+import 'package:scoreboard/src/model/player_model.dart';
+export 'package:scoreboard/src/model/player_model.dart';
+import 'package:scoreboard/src/model/score_model.dart';
+export 'package:scoreboard/src/model/score_model.dart';
+import 'package:scoreboard/src/model/game_model.dart';
+export 'package:scoreboard/src/model/game_model.dart';
+import 'package:scoreboard/src/model/setting_model.dart';
+export 'package:scoreboard/src/model/setting_model.dart';
 
 //Config
 import 'package:scoreboard/src/config/Utils.dart';
@@ -42,6 +47,13 @@ class DBProvider {
         //onUpgrade: _onUpdate,
         onOpen: (db) {},
         onCreate: ( Database db, int version ) async {
+
+          await db.execute(
+              'CREATE TABLE setting ('
+                  ' id INTEGER PRIMARY KEY,'
+                  ' firstTime INTEGER'
+                  ')'
+          );
 
           await db.execute(
               'CREATE TABLE games ('
@@ -88,6 +100,8 @@ class DBProvider {
                   ')'
           );
 
+          await db.insert('setting',  { "id"   : null, "firstTime" : 1 } );
+
         }
 
     );
@@ -95,10 +109,44 @@ class DBProvider {
   }
 
   //////////////////////////
+  //        setting       //
+  //////////////////////////
+
+  Future<SettingModel> getSetting() async {
+
+    final db  = await database;
+    final res = await db.rawQuery("SELECT * FROM setting");
+
+    SettingModel setting = SettingModel.fromJson(res[0]);
+
+    return setting;
+
+  }
+
+  updateSetting( int firstTime ) async {
+
+    final db  = await database;
+    final res = await db.rawQuery("UPDATE setting SET firstTime = $firstTime");
+    return res;
+
+  }
+
+  //////////////////////////
   //        games         //
   //////////////////////////
 
-  
+  Future<List<GameModel>> getActiveGame() async {
+
+    final db  = await database;
+    final res = await db.rawQuery("SELECT * FROM games WHERE games.status = '1';");
+
+    List<GameModel> list = res.isNotEmpty
+        ? res.map( (c) => GameModel.fromJson(c) ).toList()
+        : [];
+    return list;
+  }
+
+  //////////////////////////
 
   //inserta los nuevos jugadores
   newPlayer( PlayerModel playerModel ) async {

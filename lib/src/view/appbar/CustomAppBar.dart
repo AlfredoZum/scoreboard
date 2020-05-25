@@ -21,19 +21,6 @@ Future showDialogEndGame( BuildContext context ){
 
 }
 
-//Muestra un dialogo para agregar jugadores
-Future addPlayers( PlayersBloc playersBloc, BuildContext context ){
-
-  playersBloc.initEmptyPlayer();
-  return showDialog(
-      context: context,
-      builder: ( context ) {
-        return DialogAddPlayer();
-      }
-  );
-
-}
-
 class HomeAppBarHome extends AppBar {
 
   final PlayersBloc playersBloc;
@@ -50,7 +37,7 @@ class HomeAppBarHome extends AppBar {
       ),
       IconButton(
         icon: Icon( Icons.add ),
-        onPressed: () => addPlayers( playersBloc, context ),
+        onPressed: () => ShowDialogAddPlayers( context ),
       ),
       _iconTypeView()
     ],

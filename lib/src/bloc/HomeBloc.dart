@@ -67,7 +67,6 @@ class HomeBloc with ScoreValidators {
 
   }
 
-
   //Get the player and score of current game
   getActiveScores() async {
 

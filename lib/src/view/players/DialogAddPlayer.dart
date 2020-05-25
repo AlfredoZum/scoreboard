@@ -9,6 +9,21 @@ import 'package:scoreboard/src/bloc/provider.dart';
 //Component
 import 'package:scoreboard/src/view/players/Component/AddPlayers.dart';
 
+//Muestra un dialogo para agregar jugadores
+Future ShowDialogAddPlayers(  BuildContext context ){
+
+  final PlayersBloc playersBloc = Provider.of(context);
+
+  playersBloc.initEmptyPlayer();
+  return showDialog(
+      context: context,
+      builder: ( context ) {
+        return DialogAddPlayer();
+      }
+  );
+
+}
+
 class DialogAddPlayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

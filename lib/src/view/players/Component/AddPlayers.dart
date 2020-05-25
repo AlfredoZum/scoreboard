@@ -51,8 +51,7 @@ class AddPlayers extends StatelessWidget {
   Widget _btnAddNewPlayer( PlayersBloc playersBloc ){
 
     void _addNewTempPlayer( PlayersBloc playersBloc ){
-      print( "hola k aces" );
-      //playersBloc.addTempPlayer();
+      playersBloc.addTempPlayer();
     }
 
     return FlatButton(

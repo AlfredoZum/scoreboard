@@ -49,32 +49,6 @@ class HomePage extends StatelessWidget {
 
   }
 
-  void _showDialog( BuildContext context ) {
-
-    print( "aqui show dialog" );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Alert Dialog title"),
-          content: new Text("Alert Dialog body"),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Close"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-
-  }
-
   Widget _screenHome( PlayersBloc playersBloc, HomeBloc homeBloc, BuildContext context ){
 
     return StreamBuilder<List>(
@@ -87,18 +61,10 @@ class HomePage extends StatelessWidget {
 
           final List<GameModel> game = snapshot.data[0] as List<GameModel>;
           final SettingModel setting = snapshot.data[1] as SettingModel;
-          final bool _initApp = snapshot.data[2] as bool;
 
           if( game.length == 0 ){
 
             if( setting.firstTime == 1 ){
-
-              /*if( !_initApp ){
-                //WidgetsBinding.instance.addPostFrameCallback((_) => DialogFirstTime());
-
-                homeBloc.changeInitApp( true );
-                //_showDialog( context );
-              }*/
 
               return BodyFirstTime();
 

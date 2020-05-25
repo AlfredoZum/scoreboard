@@ -11,6 +11,8 @@ import 'package:scoreboard/src/model/score_model.dart';
 export 'package:scoreboard/src/model/score_model.dart';
 import 'package:scoreboard/src/model/game_model.dart';
 export 'package:scoreboard/src/model/game_model.dart';
+import 'package:scoreboard/src/model/games_played_model.dart';
+export 'package:scoreboard/src/model/games_played_model.dart';
 import 'package:scoreboard/src/model/setting_model.dart';
 export 'package:scoreboard/src/model/setting_model.dart';
 
@@ -39,6 +41,7 @@ class DBProvider {
     urlImageLocal = documentsDirectory.path;
 
     final path = join( documentsDirectory.path, 'ScoreboardDB.db' );
+    print( path );
 
     return await openDatabase(
         path,
@@ -51,7 +54,8 @@ class DBProvider {
           await db.execute(
               'CREATE TABLE setting ('
                   ' id INTEGER PRIMARY KEY,'
-                  ' firstTime INTEGER'
+                  ' firstTime INTEGER,'
+                  ' activeGame INTEGER'
                   ')'
           );
 
@@ -100,7 +104,7 @@ class DBProvider {
                   ')'
           );
 
-          await db.insert('setting',  { "id"   : null, "firstTime" : 1 } );
+          await db.insert('setting',  { "id"   : null, "firstTime" : 1, "activeGame": 0 } );
 
         }
 
@@ -144,6 +148,25 @@ class DBProvider {
         ? res.map( (c) => GameModel.fromJson(c) ).toList()
         : [];
     return list;
+  }
+
+
+  Future<int> insertGame( GameModel gameModel ) async {
+    final db  = await database;
+    final res = await db.insert('games',  gameModel.toJson() );
+    return res;
+  }
+
+
+
+  //////////////////////////
+  //     games played     //
+  //////////////////////////
+
+  Future<int> insertGamesPlayed( GamesPlayedModel gamesPlayedModel ) async {
+    final db  = await database;
+    final res = await db.insert('gamesPlayed',  gamesPlayedModel.toJson() );
+    return res;
   }
 
   //////////////////////////

@@ -42,7 +42,7 @@ class BodyFirstTime extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Text(
-                  'Upps!, No tienes ninguna juego registrado',
+                  'Upps!, No tienes ninguna juego.',
                   style: Theme.of(context).textTheme.headline4,
                   textAlign: TextAlign.center,
                 ),
@@ -76,15 +76,22 @@ class DialogNameGameFirstTime extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    //final HomeBloc homeBloc = Provider.homeBloc(context);
+    final GameBloc gameBloc = Provider.gameBloc(context);
+
     return AlertDialog(
       title: new Text("ScoreBoard"),
-      content: _createBody( context ),
+      content: _createBody( context, gameBloc ),
       actions: <Widget>[
         new FlatButton(
           child: new Text("Siguiente"),
-          onPressed: () {
-            Navigator.of(context).pop();
+          onPressed: () async {
 
+            final int response = await gameBloc.createGame( 'first_game' );
+            //homeBloc.createGame(  );
+
+            //Navigator.of(context).pop();
+            //ShowDialogAddPlayers( context );
           },
         ),
       ],
@@ -92,35 +99,49 @@ class DialogNameGameFirstTime extends StatelessWidget {
 
   }
 
-  Widget _createBody( BuildContext context ){
+  Widget _createBody( BuildContext context, GameBloc gameBloc ){
 
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
-            "Parece que es tu primera vez aqui!!",
+            "Parece que no tienes juegos registrados",
             style: Theme.of(context).textTheme.headline6,
             textAlign: TextAlign.center,
           ),
           SizedBox( height: SizeConfig.padding20 ),
-          Text("Crear tu primera partida"),
+          Text("Crea tu primera partida"),
           SizedBox( height: SizeConfig.padding20 ),
-          _textFieldNameGame(),
+          _textFieldNameGame( gameBloc ),
         ],
       ),
     );
 
   }
 
-  Widget _textFieldNameGame(){
+  Widget _textFieldNameGame( GameBloc gameBloc ){
 
-    return TextField(
-      decoration: InputDecoration(
-          hintText: 'Nombre del juego'
-      ),
+    return StreamBuilder(
+      stream: gameBloc.nameGameStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextField(
+            controller: gameBloc.textNameGameController,
+            decoration: InputDecoration(
+                //icon: Icon( Icons.play_arrow ),
+                labelText: 'Nombre del juego',
+                errorText: ( snapshot.error == null ) ? null : snapshot.error.toString(),
+            ),
+            //onChanged: gameBloc.changeNameGame,
+          ),
+
+        );
+
+      },
     );
-
   }
 
 }

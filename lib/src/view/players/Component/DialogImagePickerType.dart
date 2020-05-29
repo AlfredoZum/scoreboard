@@ -9,7 +9,6 @@ import 'package:scoreboard/src/config/SizeConfig.dart';
 
 //Provider
 import 'package:scoreboard/src/bloc/provider.dart';
-import 'package:scoreboard/src/db_provider/DBProvider.dart';
 
 class DialogImagePickerType extends StatelessWidget {
 
@@ -66,7 +65,7 @@ class DialogImagePickerType extends StatelessWidget {
 
   }
 
-  _buildType( BuildContext context, IconData type, String title ){
+  Widget _buildType( BuildContext context, IconData type, String title ){
 
     final TextStyle styleTitle = TextStyle( fontSize: SizeConfig.blockSizeVertical * 1.7, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w600 );
 

@@ -25,16 +25,16 @@ class ScoreModel {
   });
 
   factory ScoreModel.fromJson(Map<String, dynamic> json) => new ScoreModel(
-    id   : json["id"],
-    playerId : json["playerId"],
-    playerName: json["playerName"],
-    playerImage: json["playerImage"],
-    score: json["score"],
-    assistance: json["assistance"],
-    createAt: json["create_at"],
-    updateAt: json["update_at"],
-    interval: json["interval"],
-    status: json["status"],
+    id   : int.tryParse( json["id"].toString() ),
+    playerId : int.tryParse( json["playerId"].toString() ),
+    playerName: json["playerName"].toString(),
+    playerImage: json["playerImage"].toString(),
+    score: int.tryParse( json["score"].toString() ),
+    assistance: int.tryParse( json["assistance"].toString() ),
+    createAt: json["create_at"].toString(),
+    updateAt: json["update_at"].toString(),
+    interval: int.tryParse( json["interval"].toString() ),
+    status: int.tryParse( json["status"].toString() ),
   );
 
   Map<String, dynamic> toJson() => {

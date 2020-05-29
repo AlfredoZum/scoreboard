@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-//Config
-import 'package:scoreboard/src/config/SizeConfig.dart';
-
 //provider
 import 'package:scoreboard/src/bloc/provider.dart';
 
@@ -13,6 +9,21 @@ import 'package:scoreboard/src/bloc/provider.dart';
 //Component
 import 'package:scoreboard/src/view/players/Component/AddPlayers.dart';
 
+//Muestra un dialogo para agregar jugadores
+Future ShowDialogAddPlayers(  BuildContext context ){
+
+  final PlayersBloc playersBloc = Provider.of(context);
+
+  playersBloc.initEmptyPlayer();
+  return showDialog(
+      context: context,
+      builder: ( context ) {
+        return DialogAddPlayer();
+      }
+  );
+
+}
+
 class DialogAddPlayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -20,6 +31,7 @@ class DialogAddPlayer extends StatelessWidget {
     final PlayersBloc playersBloc = Provider.of(context);
 
     return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       title: Text('Añadir Jugadores'),
       content: AddPlayers(),
       actions: <Widget>[
